@@ -1,9 +1,21 @@
 const express = require("express");
 const cors = require("cors");
 const app = express();
+var cron = require('node-cron');
+const shell = require('shelljs');
 var corsOptions = {
   origin: "http://localhost:8081"
 };
+
+
+// cron.schedule('*/10 * * * * *', () => {
+//   console.log('running a task every second');
+//   if(shell.exec("dir").code !==0){
+//     console.log("something went wrong");
+
+    
+//   }
+// });
 
 app.use(cors(corsOptions));
 // parse requests of content-type - application/json
@@ -12,7 +24,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 // simple route
 app.get("/", (req, res) => {
-  res.json({ message: "Welcome to bezkoder application." });
+  res.json({ message: "Welcome to StudentDB application." });
 });
 // set port, listen for requests
 require("./app/routes/Student.routes")(app);
@@ -22,6 +34,7 @@ app.listen(PORT, () => {
 });
 
 const db = require("./app/models");
+
 db.mongoose
   .connect(db.url, {
     useNewUrlParser: true,
@@ -34,3 +47,7 @@ db.mongoose
     console.log("Cannot connect to the database!", err);
     process.exit();
   });
+
+
+
+  

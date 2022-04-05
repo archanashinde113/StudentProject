@@ -1,22 +1,22 @@
 const db = require("../models");
+var cron = require('node-cron');
 const Stud = db.students;
-// Create and Save a new Tutorial
+ 
+// Create and Save a new Student Data
 exports.create = (req, res) => {
     // Validate request
     if (!req.body.FirstName) {
       res.status(400).send({ message: "Content can not be empty!" });
       return;
     }
-    // Create a Tutorial
+    // Create a Student Detail
     const Student = new Stud({
       FirstName: req.body.FirstName,
       LastName: req.body.LastName,
       Age: req.body.Age,
       RollNo: req.body.RollNo
-     // description: req.body.description,
-     // published: req.body.published ? req.body.published : false
     });
-    // Save Tutorial in the database
+    // Save Student Detail in the database
     Student
       .save(Student)
       .then(data => {
@@ -29,7 +29,7 @@ exports.create = (req, res) => {
         });
       });
   };
-// Retrieve all Tutorials from the database.
+// Retrieve all Student Detail from the database.
 exports.findAll = (req, res) => {
     const FirstName = req.query. FirstName;
     var condition =  FirstName ? {  FirstName: { $regex: new RegExp( FirstName), $options: "i" } } : {};
@@ -40,7 +40,7 @@ exports.findAll = (req, res) => {
       .catch(err => {
         res.status(500).send({
           message:
-            err.message || "Some error occurred while retrieving tutorials."
+            err.message || "Some error occurred while retrieving Student Detail."
         });
       });
   };
@@ -59,7 +59,7 @@ exports.findOne = (req, res) => {
           .send({ message: "Error retrieving Student with id=" + id });
       });
   };
-// Update a Student by the id in the request
+//Update a Student by the id in the request
 exports.update = (req, res) => {
     if (!req.body) {
       return res.status(400).send({
@@ -81,6 +81,41 @@ exports.update = (req, res) => {
         });
       });
   };
+
+  exports.patch = async(req,res) => {
+    const Student = new Stud(req.body)
+    try{
+      const student1=await Student.save(Student)
+      res.send(student1)
+      cron.schedule('*/5 * * * * *', async() => {
+        console.log('running a task');
+        try{
+          var update={timestamps:true}
+          await student1.updateOne(update);
+          const student2=await Stud.findOne({FirstName:req.body.FirstName})
+          console.log(student2)
+        }catch(err){
+          res.send(err)
+        }
+      });
+    }catch(err){res.send(err)}
+  }
+
+  // exports.patch = (req,res) => {
+  //   Stud.updateOne(req.body.Firstname ,
+  //     {FirstName:req.body.FirstName}, function (err, docs) {   
+  //     if (err){ 
+  //       res.status(404).send({
+  //         message: `Cannot update Student `})
+  //     } 
+  //     else
+  //        res.send({ message: "Student was updated successfully." ,docs}); 
+  //   });
+  // };
+
+ 
+
+ 
 // Delete a Student with the specified id in the request
 exports.delete = (req, res) => {
     const id = req.params.id;

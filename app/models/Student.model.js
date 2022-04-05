@@ -7,15 +7,14 @@
            LastName: String,
            Age: Number,
            RollNo : Number,
-           //description: String,
-          // published: Boolean
-        
          },
-         { timestamps: true }
+         { timestamps: true },
+         
        )
      );
      return Stud;
-
-  
    };
 
+
+
+   

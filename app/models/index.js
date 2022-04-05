@@ -5,4 +5,5 @@ const db = {};
 db.mongoose = mongoose;
 db.url = dbConfig.url;
 db.students = require("./Student.model.js")(mongoose);
+
 module.exports = db;
